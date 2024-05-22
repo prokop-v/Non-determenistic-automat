@@ -8,8 +8,6 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="sources" level="project" />
-    <orderEntry type="library" name="batik-all-1.17" level="project" />
-    <orderEntry type="library" name="batik-anim-1.17" level="project" />
-    <orderEntry type="library" name="batik-util-1.17" level="project" />
+    <orderEntry type="library" name="batik-ext-1.17" level="project" />
   </component>
 </module>
