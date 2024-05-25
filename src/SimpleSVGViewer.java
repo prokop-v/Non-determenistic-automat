@@ -17,7 +17,7 @@ public class SimpleSVGViewer {
 
 
         // Load the first SVG file
-        File svgFile1 = new File("NKA_NEWEST.svg");
+        File svgFile1 = new File("input_svgs/NKA_INPUT_X.svg");
 
         if (!svgFile1.exists()) {
             System.err.println("One or both SVG files not found.");
