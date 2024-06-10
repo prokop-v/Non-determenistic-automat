@@ -16,10 +16,11 @@ public class NKA {
     public static ArrayList<Character> list0_F = new ArrayList<>();
     public static ArrayList<Character> list0 = new ArrayList<>();
     public static ArrayList<Character> listX = new ArrayList<>();
+    public static JSVGCanvas svgCanvas = new JSVGCanvas();
     public static final char END = 'K';
     public static final char RESET = 'R';
     public static char input;
-    public static String picture = "NKA_INPUT_X";
+    public static String picture = "NKA_START";
 
 
     public static void main(String[] args) throws InterruptedException {
@@ -36,22 +37,19 @@ public class NKA {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
 
-        // Create a new JSVGCanvas
-        JSVGCanvas svgCanvas1 = new JSVGCanvas();
-        svgCanvas1.addKeyListener(new KeyListener() {
-            char input;
+        svgCanvas.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
 
                 if(e.getKeyChar() == END) {
                     System.out.println("Program končí.");
                     System.exit(0);
+                }
                 if(e.getKeyChar() == RESET){
                     pictureSetter("NKA_START");
                 }
                 if(e.getKeyChar() == '0'){
                     pictureSetter("NKA_FIRST_INPUT_0");
-                }
                 }
                 System.out.println(e.getKeyChar());
                 System.out.println(picture);
@@ -77,10 +75,10 @@ public class NKA {
         }
 
         // Set the first SVG
-        svgCanvas1.setURI(svgFile1.toURI().toString());
+        updateSVG();
 
         // Add the canvas to the frame
-        frame.add(svgCanvas1, BorderLayout.CENTER);
+        frame.add(svgCanvas, BorderLayout.CENTER);
         frame.setVisible(true);
     }
 
@@ -101,5 +99,18 @@ public class NKA {
 
     public static void pictureSetter(String pictureName){
         picture = pictureName;
+        updateSVG();
+    }
+
+    public static void updateSVG() {
+        File svgFile1 = new File("input_svgs/" + picture + ".svg");
+
+        if (!svgFile1.exists()) {
+            System.err.println("SVG file not found: " + svgFile1.getPath());
+            return;
+        }
+
+        // Set the new SVG
+        svgCanvas.setURI(svgFile1.toURI().toString());
     }
 }
