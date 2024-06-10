@@ -22,7 +22,7 @@ public class NKA {
     public static final char RESET = 'R';
     public static char input;
     public static String picture = "NKA_START";
-    public static int newState = 6;
+    public static int newState = 5;
     public static HashMap<Integer, int[]> table = new HashMap<>();
     public static ArrayList<Character>[][] array = new ArrayList[5][2];
 
@@ -44,6 +44,7 @@ public class NKA {
             @Override
             public void keyTyped(KeyEvent e) {
                 changeState(newState, e.getKeyChar());
+                System.out.println(e.getKeyChar());
             }
 
             @Override
@@ -109,9 +110,7 @@ public class NKA {
     public static void changeState(int oldState, char e){
         //e = input
         //oldstate = kde zrovna jsme, chceme vrátit index stavu, do kterého se pomocí inputu dostaneme
-        table.get(oldState);
-        char keyChar = Character.toUpperCase(e); // Convert to upper case
-        searchInput(table.get(oldState), e);
+        char keyChar = Character.toUpperCase(e);
         if (keyChar == END) {
             System.out.println("Program končí.");
             System.exit(0);
@@ -120,22 +119,30 @@ public class NKA {
             pictureSetter("NKA_START");
         }
 
-        if (oldState == 6) {
-            table.get(oldState);
+        newState = searchInput(table.get(oldState), e);
+
+        if (newState == 0) {
             pictureSetter("NKA_FIRST_INPUT_0");
         }
         if (keyChar == '0' && oldState == '6') {
             pictureSetter("NKA_FIRST_INPUT_0");
         }
-        newState = oldState;
+        if(newState == -1){
+            System.err.println("Vstupní znak nevyhovuje žádnému povolenému znaku");
+            System.exit(1);
+        }
     }
 
-    public static void searchInput(int[] states, char key){
+    public static int searchInput(int[] states, char key){
         for(int i = 0; i < states.length; i++){
             for (int y = 0; y < array[states[i]].length; y++){
-                    array[states[i]][y].contains(key);
+                if (array[states[i]][y].contains(key) == true) {
+                    return states[i];
+                }
             }
         }
+        System.out.println("xd");
+        return -1;
     }
 
     public static void fillTable(HashMap<Integer, int[]> table){
