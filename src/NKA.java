@@ -19,6 +19,7 @@ public class NKA {
     public static final char END = 'K';
     public static final char RESET = 'R';
     public static char input;
+    public static String picture = "NKA_INPUT_X";
 
 
     public static void main(String[] args) throws InterruptedException {
@@ -43,10 +44,17 @@ public class NKA {
             public void keyTyped(KeyEvent e) {
 
                 if(e.getKeyChar() == END) {
-
                     System.out.println("Program končí.");
-                    //System.exit(0);
+                    System.exit(0);
+                if(e.getKeyChar() == RESET){
+                    pictureSetter("NKA_START");
                 }
+                if(e.getKeyChar() == '0'){
+                    pictureSetter("NKA_FIRST_INPUT_0");
+                }
+                }
+                System.out.println(e.getKeyChar());
+                System.out.println(picture);
             }
 
             @Override
@@ -61,7 +69,7 @@ public class NKA {
         });
 
         // Load the first SVG file
-        File svgFile1 = new File("input_svgs/NKA_START.svg");
+        File svgFile1 = new File("input_svgs/" + picture + ".svg");
 
         if (!svgFile1.exists()) {
             System.err.println("One or both SVG files not found.");
@@ -89,5 +97,9 @@ public class NKA {
         array[3][0] = listX;
         //array[4] = stav E
         array[4][0] = list0_F;
+    }
+
+    public static void pictureSetter(String pictureName){
+        picture = pictureName;
     }
 }
