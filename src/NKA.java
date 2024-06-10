@@ -21,6 +21,7 @@ public class NKA {
     public static final char RESET = 'R';
     public static char input;
     public static String picture = "NKA_START";
+    public static char newState = '6';
 
 
     public static void main(String[] args) throws InterruptedException {
@@ -40,21 +41,7 @@ public class NKA {
         svgCanvas.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-                char keyChar = Character.toUpperCase(e.getKeyChar()); // Convert to upper case
-
-                if (keyChar == END) {
-                    System.out.println("Program končí.");
-                    System.exit(0);
-                }
-                if (keyChar == RESET) {
-                    pictureSetter("NKA_START");
-                }
-                if (keyChar == '0') {
-                    pictureSetter("NKA_FIRST_INPUT_0");
-                }
-
-                System.out.println(keyChar);
-                System.out.println(picture);
+                changeState(newState, e.getKeyChar());
             }
 
             @Override
@@ -97,6 +84,7 @@ public class NKA {
         array[3][0] = listX;
         //array[4] = stav E
         array[4][0] = list0_F;
+        //array[5] = stav S
     }
 
     public static void pictureSetter(String pictureName){
@@ -114,5 +102,23 @@ public class NKA {
 
         // Set the new SVG
         svgCanvas.setURI(svgFile1.toURI().toString());
+    }
+
+    public static void changeState(char oldState, char e){
+        //e = input
+        //oldstate = kde zrovna jsme, chceme vrátit index stavu, do kterého se pomocí inputu dostaneme
+        char keyChar = Character.toUpperCase(e); // Convert to upper case
+
+        if (keyChar == END) {
+            System.out.println("Program končí.");
+            System.exit(0);
+        }
+        if (keyChar == RESET) {
+            pictureSetter("NKA_START");
+        }
+        if (keyChar == '0') {
+            pictureSetter("NKA_FIRST_INPUT_0");
+        }
+        newState = oldState;
     }
 }
