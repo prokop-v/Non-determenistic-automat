@@ -40,18 +40,20 @@ public class NKA {
         svgCanvas.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
+                char keyChar = Character.toUpperCase(e.getKeyChar()); // Convert to upper case
 
-                if(e.getKeyChar() == END) {
+                if (keyChar == END) {
                     System.out.println("Program končí.");
                     System.exit(0);
                 }
-                if(e.getKeyChar() == RESET){
+                if (keyChar == RESET) {
                     pictureSetter("NKA_START");
                 }
-                if(e.getKeyChar() == '0'){
+                if (keyChar == '0') {
                     pictureSetter("NKA_FIRST_INPUT_0");
                 }
-                System.out.println(e.getKeyChar());
+
+                System.out.println(keyChar);
                 System.out.println(picture);
             }
 
