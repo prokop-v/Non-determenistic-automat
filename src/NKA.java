@@ -6,6 +6,7 @@ import java.awt.event.KeyListener;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Scanner;
 
 public class NKA {
@@ -21,7 +22,9 @@ public class NKA {
     public static final char RESET = 'R';
     public static char input;
     public static String picture = "NKA_START";
-    public static char newState = '6';
+    public static int newState = 6;
+    public static HashMap<Integer, int[]> table = new HashMap<>();
+    public static ArrayList<Character>[][] array = new ArrayList[5][2];
 
 
     public static void main(String[] args) throws InterruptedException {
@@ -31,9 +34,8 @@ public class NKA {
         Collections.addAll(list0_F, '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F');
         list0.add('0');
         listX.add('X');
-        ArrayList<Character>[][] array = new ArrayList[5][2];
         fillarray(array);
-
+        fillTable(table);
         JFrame frame = new JFrame("Simple SVG Viewer");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
@@ -104,11 +106,12 @@ public class NKA {
         svgCanvas.setURI(svgFile1.toURI().toString());
     }
 
-    public static void changeState(char oldState, char e){
+    public static void changeState(int oldState, char e){
         //e = input
         //oldstate = kde zrovna jsme, chceme vrátit index stavu, do kterého se pomocí inputu dostaneme
+        table.get(oldState);
         char keyChar = Character.toUpperCase(e); // Convert to upper case
-
+        searchInput(table.get(oldState), e);
         if (keyChar == END) {
             System.out.println("Program končí.");
             System.exit(0);
@@ -116,9 +119,31 @@ public class NKA {
         if (keyChar == RESET) {
             pictureSetter("NKA_START");
         }
-        if (keyChar == '0') {
+
+        if (oldState == 6) {
+            table.get(oldState);
+            pictureSetter("NKA_FIRST_INPUT_0");
+        }
+        if (keyChar == '0' && oldState == '6') {
             pictureSetter("NKA_FIRST_INPUT_0");
         }
         newState = oldState;
+    }
+
+    public static void searchInput(int[] states, char key){
+        for(int i = 0; i < states.length; i++){
+            for (int y = 0; y < array[states[i]].length; y++){
+                    array[states[i]][y].contains(key);
+            }
+        }
+    }
+
+    public static void fillTable(HashMap<Integer, int[]> table){
+        table.put(5, new int[]{0, 1}); //S
+        table.put(0, new int[]{2, 3}); //A
+        table.put(1, new int[]{1}); //B
+        table.put(2, new int[]{2}); //C
+        table.put(3, new int[]{4}); //D
+        table.put(4, new int[]{4}); //E
     }
 }
