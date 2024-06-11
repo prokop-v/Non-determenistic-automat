@@ -4,6 +4,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
+import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,6 +26,7 @@ public class NKA {
     public static int newState = 5;
     public static HashMap<Integer, int[]> table = new HashMap<>();
     public static ArrayList<Character>[][] array = new ArrayList[5][2];
+    public static String outputTextField = "Zadaný řetezec: ";
 
 
     public static void main(String[] args) throws InterruptedException {
@@ -41,17 +43,28 @@ public class NKA {
         frame.setSize(800, 600);
         frame.setLocationRelativeTo(null);
 
+        // Create a text field
+        JTextField textField = new JTextField(20);
+        frame.add(textField, BorderLayout.SOUTH); // Add the text field to the bottom
+        textField.setEditable(false);
+        textField.setText(outputTextField);
 
         svgCanvas.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-                changeState(newState, e.getKeyChar());
-                System.out.println(e.getKeyChar());
+
+                changeState(newState, e.getKeyChar(),textField);
+                char keyChar = Character.toUpperCase(e.getKeyChar());
+                if(keyChar != 'R')
+                    textField.setText(textField.getText() + e.getKeyChar());
             }
 
             @Override
             public void keyPressed(KeyEvent e) {
-
+                if (e.getKeyCode() == KeyEvent.VK_UP || e.getKeyCode() == KeyEvent.VK_DOWN ||
+                        e.getKeyCode() == KeyEvent.VK_LEFT || e.getKeyCode() == KeyEvent.VK_RIGHT) {
+                    e.consume();
+                }
             }
 
             @Override
@@ -72,10 +85,9 @@ public class NKA {
         updateSVG();
 
         // Add the canvas to the frame
-        frame.add(svgCanvas, BorderLayout.CENTER);
+        frame.add(svgCanvas, BorderLayout.CENTER);;
         frame.setVisible(true);
     }
-
 
     public static void fillarray(ArrayList<Character>[][] array){
         //array[0] = stav A
@@ -109,7 +121,7 @@ public class NKA {
         svgCanvas.setURI(svgFile1.toURI().toString());
     }
 
-    public static void changeState(int oldState, char e){
+    public static void changeState(int oldState, char e, JTextField textField){
         //e = input
         //oldstate = kde zrovna jsme, chceme vrátit index stavu, do kterého se pomocí inputu dostaneme
         char keyChar = Character.toUpperCase(e);
@@ -119,13 +131,13 @@ public class NKA {
         }
         if (keyChar == RESET) {
             pictureSetter("NKA_START");
+            String outputTextField = "Zadaný řetezec: ";
+            textField.setText(outputTextField);
+
             newState = 5;
             return;
         }
         newState = searchInput(table.get(oldState), e);
-        //System.out.println(newState);
-        //System.out.println(oldState);
-
 
         if (newState == 1 && oldState == 5){//Test B
             pictureSetter("NKA_FIRST_INPUT_1-9");
@@ -137,12 +149,12 @@ public class NKA {
             pictureSetter("NKA_INPUT_0-7");
         }else if( newState == 3 && oldState == 0){//test D
             pictureSetter("NKA_INPUT_X");
-        }else if( (newState == 4 && oldState == 3) || (newState == 4 && oldState == 3) ){//Test D
+        }else if( (newState == 4 && oldState == 3) || (newState == 4 && oldState == 4) ){//Test D
             pictureSetter("NKA_INPUT-0-9,A-F");
         }
 
         if(newState == -1){
-            System.err.println("Vstupní znak nevyhovuje žádnému povolenému znaku");
+            System.err.println("Vstupní znak: " + e + " nevyhovuje žádnému povolenému znaku.");
             System.exit(1);
         }
     }
