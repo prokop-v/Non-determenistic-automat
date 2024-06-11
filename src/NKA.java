@@ -45,6 +45,14 @@ public class NKA {
 
         // Create a text field
         JTextField textField = new JTextField(20);
+        Dimension textFieldPreferredSize = new Dimension(150, 60); // Adjust the width here
+        textField.setPreferredSize(textFieldPreferredSize);
+
+        // Set font size
+        Font textFieldFont = textField.getFont();
+        textFieldFont = textFieldFont.deriveFont(Font.PLAIN, 20); // Adjust the font size here
+        textField.setFont(textFieldFont);
+
         frame.add(textField, BorderLayout.SOUTH); // Add the text field to the bottom
         textField.setEditable(false);
         textField.setText(outputTextField);
