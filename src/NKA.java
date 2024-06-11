@@ -39,6 +39,8 @@ public class NKA {
         JFrame frame = new JFrame("Simple SVG Viewer");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
+        frame.setLocationRelativeTo(null);
+
 
         svgCanvas.addKeyListener(new KeyListener() {
             @Override
@@ -117,16 +119,28 @@ public class NKA {
         }
         if (keyChar == RESET) {
             pictureSetter("NKA_START");
+            newState = 5;
+            return;
         }
-
         newState = searchInput(table.get(oldState), e);
+        //System.out.println(newState);
+        //System.out.println(oldState);
 
-        if (newState == 0) {
+
+        if (newState == 1 && oldState == 5){//Test B
+            pictureSetter("NKA_FIRST_INPUT_1-9");
+        }else if(newState == 1 && oldState == 1){
+            pictureSetter("NKA_INPUT_0-9_1");
+        }else if(newState == 0 && oldState == 5){//Test A
             pictureSetter("NKA_FIRST_INPUT_0");
+        }else if( (newState == 2 && oldState == 0) || (newState == 2 && oldState == 2) ){//Test C
+            pictureSetter("NKA_INPUT_0-7");
+        }else if( newState == 3 && oldState == 0){//test D
+            pictureSetter("NKA_INPUT_X");
+        }else if( (newState == 4 && oldState == 3) || (newState == 4 && oldState == 3) ){//Test D
+            pictureSetter("NKA_INPUT-0-9,A-F");
         }
-        if (keyChar == '0' && oldState == '6') {
-            pictureSetter("NKA_FIRST_INPUT_0");
-        }
+
         if(newState == -1){
             System.err.println("Vstupní znak nevyhovuje žádnému povolenému znaku");
             System.exit(1);
@@ -136,12 +150,11 @@ public class NKA {
     public static int searchInput(int[] states, char key){
         for(int i = 0; i < states.length; i++){
             for (int y = 0; y < array[states[i]].length; y++){
-                if (array[states[i]][y].contains(key) == true) {
+                if (array[states[i]][y] != null && array[states[i]][y].contains(key) == true) {
                     return states[i];
                 }
             }
         }
-        System.out.println("xd");
         return -1;
     }
 
