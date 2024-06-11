@@ -4,41 +4,107 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
-import java.sql.SQLOutput;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Scanner;
 
+
+/**
+ * @author Vaclav Prokop, Filip Valtr
+ */
 public class NKA {
 
+    /**
+     * List of characters which allows input from 0 to 9
+     */
     public static ArrayList<Character> list0_9 = new ArrayList<>();
+
+    /**
+     * List of characters which allows input from 1 to 9
+     */
     public static ArrayList<Character> list1_9 = new ArrayList<>();
+
+    /**
+     * List of characters which allows input from 0 to 7
+     */
     public static ArrayList<Character> list0_7 = new ArrayList<>();
+
+    /**
+     * List of characters which allows input from 0 to F
+     */
     public static ArrayList<Character> list0_F = new ArrayList<>();
+
+    /**
+     * List of characters which allows input of 0
+     */
     public static ArrayList<Character> list0 = new ArrayList<>();
+
+    /**
+     * List of characters which allows input of X
+     */
     public static ArrayList<Character> listX = new ArrayList<>();
+
+    /**
+     * Component which allows us to manipulate and draw on SVG files
+     */
     public static JSVGCanvas svgCanvas = new JSVGCanvas();
+
+    /**
+     * Constant which represents the end of the program
+     */
     public static final char END = 'K';
+
+    /**
+     * Constant used for restarting the program
+     */
     public static final char RESET = 'R';
-    public static char input;
+
+    /**
+     * Attribute used for specifying the image to be loaded
+     */
     public static String picture = "NKA_START";
+
+    /**
+     * Following state of the program
+     */
     public static int newState = 5;
+
+    /**
+     * HashMap where the key is the current state and the value is the neighbors
+     */
     public static HashMap<Integer, int[]> table = new HashMap<>();
+
+    /**
+     * Array of the lists
+     */
     public static ArrayList<Character>[][] array = new ArrayList[5][2];
+
+    /**
+     * Attribute used for output
+     */
     public static String outputTextField = "Zadaný řetezec: ";
+
+    /**
+     * Text area used for displaying the output
+     */
     public static JTextField textField;
 
-
     public static void main(String[] args) throws InterruptedException {
+        // Loading data into lists
         Collections.addAll(list0_9, '0', '1', '2', '3', '4', '5', '6', '7', '8', '9');
         Collections.addAll(list1_9, '1', '2', '3', '4', '5', '6', '7', '8', '9');
         Collections.addAll(list0_7, '0', '1', '2', '3', '4', '5', '6', '7');
         Collections.addAll(list0_F, '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F');
         list0.add('0');
         listX.add('X');
-        fillarray(array);
+
+        // Filling array with lists
+        fillArray(array);
+
+        // Filling table (hash map) with states
         fillTable(table);
+
+        // Creating the frame for the program output
         JFrame frame = new JFrame("Simple SVG Viewer");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 600);
@@ -46,7 +112,9 @@ public class NKA {
 
         // Create a text field
         textField = new JTextField(20);
-        Dimension textFieldPreferredSize = new Dimension(150, 60); // Adjust the width here
+
+        // Adjust the width here
+        Dimension textFieldPreferredSize = new Dimension(150, 60);
         textField.setPreferredSize(textFieldPreferredSize);
 
         // Set font size
@@ -54,17 +122,20 @@ public class NKA {
         textFieldFont = textFieldFont.deriveFont(Font.PLAIN, 20); // Adjust the font size here
         textField.setFont(textFieldFont);
 
-        frame.add(textField, BorderLayout.SOUTH); // Add the text field to the bottom
-        textField.setEditable(false);
+        // Add the text field to the bottom of the frame
+        frame.add(textField, BorderLayout.SOUTH);
         textField.setText(outputTextField);
 
+        //Key listener
         svgCanvas.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-                changeState(newState, e.getKeyChar(),textField);
+                //
+                changeState(newState, e.getKeyChar(), textField);
                 char keyChar = Character.toUpperCase(e.getKeyChar());
-                if(keyChar != 'R')
+                if (keyChar != 'R') {
                     textField.setText(textField.getText() + e.getKeyChar());
+                }
             }
 
             @Override
@@ -77,7 +148,7 @@ public class NKA {
 
             @Override
             public void keyReleased(KeyEvent e) {
-
+                // No action needed on key release
             }
         });
 
@@ -93,32 +164,37 @@ public class NKA {
         updateSVG();
 
         // Add the canvas to the frame
-        frame.add(svgCanvas, BorderLayout.CENTER);;
+        frame.add(svgCanvas, BorderLayout.CENTER);
         frame.setVisible(true);
+
         // Disable focusability
         textField.setFocusable(false);
     }
 
-    public static void fillarray(ArrayList<Character>[][] array){
-        //array[0] = stav A
-        array[0][0] = list0;
-        //array[1] = stav B
-        array[1][0] = list1_9;
-        array[1][1] = list0_9;
-        //array[2] = stav C
-        array[2][0] = list0_7;
-        //array[3] = stav D
-        array[3][0] = listX;
-        //array[4] = stav E
-        array[4][0] = list0_F;
-        //array[5] = stav S
+    /**
+     * Fills the array with lists of characters for each state
+     */
+    public static void fillArray(ArrayList<Character>[][] array) {
+        array[0][0] = list0;      // State A
+        array[1][0] = list1_9;    // State B
+        array[1][1] = list0_9;    // State B
+        array[2][0] = list0_7;    // State C
+        array[3][0] = listX;      // State D
+        array[4][0] = list0_F;    // State E
+        // State S is not explicitly filled
     }
 
-    public static void pictureSetter(String pictureName){
+    /**
+     * Sets the current picture and updates the SVG
+     */
+    public static void pictureSetter(String pictureName) {
         picture = pictureName;
         updateSVG();
     }
 
+    /**
+     * Updates the SVG displayed in the canvas
+     */
     public static void updateSVG() {
         File svgFile1 = new File("input_svgs/" + picture + ".svg");
 
@@ -132,6 +208,9 @@ public class NKA {
         disableTextFieldIfTextFits();
     }
 
+    /**
+     * Disables the text field if the text fits within its width
+     */
     private static void disableTextFieldIfTextFits() {
         String text = textField.getText();
         FontMetrics fontMetrics = textField.getFontMetrics(textField.getFont());
@@ -140,48 +219,53 @@ public class NKA {
         textField.setFocusable(textWidth >= textFieldWidth);
     }
 
-    public static void changeState(int oldState, char e, JTextField textField){
-        //e = input
-        //oldstate = kde zrovna jsme, chceme vrátit index stavu, do kterého se pomocí inputu dostaneme
+    /**
+     * Changes the state based on the input character and updates the text field
+     */
+    public static void changeState(int oldState, char e, JTextField textField) {
         char keyChar = Character.toUpperCase(e);
         if (keyChar == END) {
-            System.out.println("Program končí.");
+            System.out.println("Program ends.");
             System.exit(0);
         }
         if (keyChar == RESET) {
             pictureSetter("NKA_START");
             String outputTextField = "Zadaný řetezec: ";
             textField.setText(outputTextField);
-
             newState = 5;
             return;
         }
+
+        //We find the new state and marked hims as a newone
         newState = searchInput(table.get(oldState), e);
 
-        if (newState == 1 && oldState == 5){//Test B
+        if (newState == 1 && oldState == 5) { // State transition B
             pictureSetter("NKA_FIRST_INPUT_1-9");
-        }else if(newState == 1 && oldState == 1){
+        } else if (newState == 1 && oldState == 1) {
             pictureSetter("NKA_INPUT_0-9_1");
-        }else if(newState == 0 && oldState == 5){//Test A
+        } else if (newState == 0 && oldState == 5) { // State transition A
             pictureSetter("NKA_FIRST_INPUT_0");
-        }else if( (newState == 2 && oldState == 0) || (newState == 2 && oldState == 2) ){//Test C
+        } else if ((newState == 2 && oldState == 0) || (newState == 2 && oldState == 2)) { // State transition C
             pictureSetter("NKA_INPUT_0-7");
-        }else if( newState == 3 && oldState == 0){//test D
+        } else if (newState == 3 && oldState == 0) { // State transition D
             pictureSetter("NKA_INPUT_X");
-        }else if( (newState == 4 && oldState == 3) || (newState == 4 && oldState == 4) ){//Test D
+        } else if ((newState == 4 && oldState == 3) || (newState == 4 && oldState == 4)) { // State transition E
             pictureSetter("NKA_INPUT-0-9,A-F");
         }
-
-        if(newState == -1){
-            System.err.println("Vstupní znak: " + e + " nevyhovuje žádnému povolenému znaku.");
+        //if the character doesn't match allowed alphabet than the program ends and error log is printed
+        if (newState == -1) {
+            System.err.println("Input character: " + e + " does not match any allowed character.");
             System.exit(1);
         }
     }
 
-    public static int searchInput(int[] states, char key){
-        for(int i = 0; i < states.length; i++){
-            for (int y = 0; y < array[states[i]].length; y++){
-                if (array[states[i]][y] != null && array[states[i]][y].contains(key) == true) {
+    /**
+     * Searches for the input character in the allowed states and returns the new state
+     */
+    public static int searchInput(int[] states, char key) {
+        for (int i = 0; i < states.length; i++) {
+            for (int y = 0; y < array[states[i]].length; y++) {
+                if (array[states[i]][y] != null && array[states[i]][y].contains(key)) {
                     return states[i];
                 }
             }
@@ -189,12 +273,15 @@ public class NKA {
         return -1;
     }
 
-    public static void fillTable(HashMap<Integer, int[]> table){
-        table.put(5, new int[]{0, 1}); //S
-        table.put(0, new int[]{2, 3}); //A
-        table.put(1, new int[]{1}); //B
-        table.put(2, new int[]{2}); //C
-        table.put(3, new int[]{4}); //D
-        table.put(4, new int[]{4}); //E
+    /**
+     * Fills the HashMap with the states and their neighbors
+     */
+    public static void fillTable(HashMap<Integer, int[]> table) {
+        table.put(5, new int[]{0, 1}); // State S
+        table.put(0, new int[]{2, 3}); // State A
+        table.put(1, new int[]{1});    // State B
+        table.put(2, new int[]{2});    // State C
+        table.put(3, new int[]{4});    // State D
+        table.put(4, new int[]{4});    // State E
     }
 }
