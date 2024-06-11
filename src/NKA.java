@@ -27,6 +27,7 @@ public class NKA {
     public static HashMap<Integer, int[]> table = new HashMap<>();
     public static ArrayList<Character>[][] array = new ArrayList[5][2];
     public static String outputTextField = "Zadaný řetezec: ";
+    public static JTextField textField;
 
 
     public static void main(String[] args) throws InterruptedException {
@@ -44,7 +45,7 @@ public class NKA {
         frame.setLocationRelativeTo(null);
 
         // Create a text field
-        JTextField textField = new JTextField(20);
+        textField = new JTextField(20);
         Dimension textFieldPreferredSize = new Dimension(150, 60); // Adjust the width here
         textField.setPreferredSize(textFieldPreferredSize);
 
@@ -55,14 +56,12 @@ public class NKA {
 
         frame.add(textField, BorderLayout.SOUTH); // Add the text field to the bottom
         textField.setEditable(false);
-        // Disable focusability
-        textField.setFocusable(false);
         textField.setText(outputTextField);
+        System.out.println(textField.getFontMetrics(textFieldFont).getWidths());
 
         svgCanvas.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
-
                 changeState(newState, e.getKeyChar(),textField);
                 char keyChar = Character.toUpperCase(e.getKeyChar());
                 if(keyChar != 'R')
@@ -97,6 +96,8 @@ public class NKA {
         // Add the canvas to the frame
         frame.add(svgCanvas, BorderLayout.CENTER);;
         frame.setVisible(true);
+        // Disable focusability
+        textField.setFocusable(false);
     }
 
     public static void fillarray(ArrayList<Character>[][] array){
@@ -129,6 +130,15 @@ public class NKA {
 
         // Set the new SVG
         svgCanvas.setURI(svgFile1.toURI().toString());
+        disableTextFieldIfTextFits();
+    }
+
+    private static void disableTextFieldIfTextFits() {
+        String text = textField.getText();
+        FontMetrics fontMetrics = textField.getFontMetrics(textField.getFont());
+        int textWidth = fontMetrics.stringWidth(text);
+        int textFieldWidth = textField.getWidth();
+        textField.setFocusable(textWidth >= textFieldWidth);
     }
 
     public static void changeState(int oldState, char e, JTextField textField){
