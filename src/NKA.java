@@ -55,6 +55,8 @@ public class NKA {
 
         frame.add(textField, BorderLayout.SOUTH); // Add the text field to the bottom
         textField.setEditable(false);
+        // Disable focusability
+        textField.setFocusable(false);
         textField.setText(outputTextField);
 
         svgCanvas.addKeyListener(new KeyListener() {
