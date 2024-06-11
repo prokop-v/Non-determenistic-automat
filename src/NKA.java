@@ -57,7 +57,6 @@ public class NKA {
         frame.add(textField, BorderLayout.SOUTH); // Add the text field to the bottom
         textField.setEditable(false);
         textField.setText(outputTextField);
-        System.out.println(textField.getFontMetrics(textFieldFont).getWidths());
 
         svgCanvas.addKeyListener(new KeyListener() {
             @Override
