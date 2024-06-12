@@ -4,6 +4,8 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.io.File;
+import java.net.URL;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,7 +16,7 @@ import java.util.HashMap;
  */
 public class NKA {
 
-    /**
+    /**0
      * List of characters which allows input from 0 to 9
      */
     public static ArrayList<Character> list0_9 = new ArrayList<>();
@@ -153,15 +155,16 @@ public class NKA {
         });
 
         // Load the first SVG file
-        File svgFile1 = new File("input_svgs/" + picture + ".svg");
+        String svgFileName = "input_svgs/" + picture + ".svg";
+        URL svgFileUrl = NKA.class.getResource("/" + svgFileName);
 
-        if (!svgFile1.exists()) {
+        if (svgFileUrl == null) {
             System.err.println("One or both SVG files not found.");
             return;
         }
 
         // Set the first SVG
-        updateSVG();
+        svgCanvas.setURI(svgFileUrl.toString());
 
         // Add the canvas to the frame
         frame.add(svgCanvas, BorderLayout.CENTER);
@@ -169,6 +172,9 @@ public class NKA {
 
         // Disable focusability
         textField.setFocusable(false);
+
+        // Update the SVG
+        updateSVG();
     }
 
     /**
@@ -196,15 +202,21 @@ public class NKA {
      * Updates the SVG displayed in the canvas
      */
     public static void updateSVG() {
-        File svgFile1 = new File("input_svgs/" + picture + ".svg");
+        String svgFileName = "input_svgs/" + picture + ".svg";
+        URL svgFileUrl = NKA.class.getClassLoader().getResource(svgFileName);
 
-        if (!svgFile1.exists()) {
-            System.err.println("SVG file not found: " + svgFile1.getPath());
-            return;
+        if (svgFileUrl != null) {
+            // Load from JAR or resources folder
+            svgCanvas.setURI(svgFileUrl.toString());
+        } else {
+            // Fallback to file system for IDE support
+            File svgFile = new File(svgFileName);
+            if (svgFile.exists()) {
+                svgCanvas.setURI(svgFile.toURI().toString());
+            } else {
+                System.err.println("SVG file not found: " + svgFileName);
+            }
         }
-
-        // Set the new SVG
-        svgCanvas.setURI(svgFile1.toURI().toString());
         disableTextFieldIfTextFits();
     }
 
